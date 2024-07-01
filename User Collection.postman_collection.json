@@ -1,0 +1,599 @@
+{
+	"info": {
+		"_postman_id": "171785d3-9623-4814-966a-50ece1d80cae",
+		"name": "User Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19273618"
+	},
+	"item": [
+		{
+			"name": "GET All Users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.variables.set(\"Total_Users\", jsonData.length)\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/users",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mandatory and Optional Fields",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const usercollectionReusabletests = pm.require('usercollection_reusabletests');\r",
+							"\r",
+							"//1) Validate status\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status(\"Created\");\r",
+							"});\r",
+							"\r",
+							"//eval(pm.collectionVariables.get(\"commonTests\"))();\r",
+							"\r",
+							"//2) Test response time\r",
+							"usercollectionReusabletests.commonTest(\"ANY\", \"response time\");\r",
+							"\r",
+							"//3) Test response header\r",
+							"usercollectionReusabletests.commonTest(\"ANY\", \"header\");\r",
+							"\r",
+							"// 4)a) test response structure -- mandatory fields\r",
+							"usercollectionReusabletests.commonTest(\"POST\", \"mandatory field data type\");\r",
+							"\r",
+							"// 4)b) test response structure -- optional fields\r",
+							"usercollectionReusabletests.commonTest(\"POST\", \"optional field data type - populated\");\r",
+							"\r",
+							"//5)a) Test mandatory field values\r",
+							"usercollectionReusabletests.commonTest(\"POST\", \"mandatory field values\");\r",
+							"\r",
+							"//5)b) Test optional field values\r",
+							"usercollectionReusabletests.commonTest(\"POST\", \"optional field values\");\r",
+							"\r",
+							"const response = pm.response.json();\r",
+							"\r",
+							"//transactional values\r",
+							"pm.variables.set(\"userID\", response.user_id);\r",
+							"pm.variables.set(\"user_firstName\", response.user_first_name);\r",
+							"\r",
+							"//Retrieve Total User count before User creation\r",
+							"let totalUsersBeforePost = pm.variables.get(\"Total_Users\")\r",
+							"\r",
+							"//GET Request for all users\r",
+							"const postReq_GETAllUsers ={\r",
+							"    method: 'GET',\r",
+							"    url: 'https://abc.com/endpoint',\r",
+							"    header: 'Content-Type: application/json',\r",
+							"}\r",
+							"\r",
+							"// Send the psot-request GET request.\r",
+							"pm.sendRequest(postReq_GETAllUsers, (err, response) => {\r",
+							"    if (err) {\r",
+							"        console.error('Error:', err);\r",
+							"    } else {\r",
+							"        const GET_response = response.json();\r",
+							"\r",
+							"    //Check increment in total number of users by 1\r",
+							"        pm.test(\"Total Users increased by 1\", function () {\r",
+							"            console.log(\"total number of users before POST call = \" + totalUsersBeforePost);\r",
+							"            console.log(\"total number of users after POST call = \" + GET_response.length);\r",
+							"            pm.expect(GET_response.length).to.eql((totalUsersBeforePost)+1);\r",
+							"        });\r",
+							"    }\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {
+							"usercollection_reusabletests": {
+								"id": "0190529c-d258-7d20-b4bd-1872bb167a87"
+							}
+						}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"user_first_name\":  \"Sample user firstname\",\r\n \"user_last_name\":  \"Sample user lastname\",\r\n \"user_contact_number\": \"8836985591\",\r\n \"user_email_id\": \"sample08email08@gmail.com\",\r\n\r\n    \"userAddress\": {\r\n    \"plotNumber\": \"12-B\",\r\n    \"street\": \"Street\",\r\n    \"state\": \"NY\",\r\n    \"country\": \"USA\",\r\n    \"zipCode\": \"10008\"\r\n     }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/createusers",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"createusers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Only Mandatory Fields",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const usercollectionReusabletests = pm.require('usercollection_reusabletests');\r",
+							"\r",
+							"//1) Validate status\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"    pm.response.to.have.status(\"Created\");\r",
+							"});\r",
+							"\r",
+							"//eval(pm.collectionVariables.get(\"commonTests\"))();\r",
+							"\r",
+							"//2) Test response time\r",
+							"usercollectionReusabletests.commonTest(\"ANY\", \"response time\");\r",
+							"\r",
+							"//3) Test response header\r",
+							"usercollectionReusabletests.commonTest(\"ANY\", \"header\");\r",
+							"\r",
+							"// 4)a) test response structure -- mandatory fields\r",
+							"usercollectionReusabletests.commonTest(\"POST\", \"mandatory field data type\");\r",
+							"\r",
+							"// 4)b) test response structure -- optional fields\r",
+							"usercollectionReusabletests.commonTest(\"POST\", \"optional field data type - unpopulated\");\r",
+							"\r",
+							"//5)a) Test mandatory field values\r",
+							"usercollectionReusabletests.commonTest(\"POST\", \"mandatory field values\");\r",
+							"\r",
+							"const response = pm.response.json();\r",
+							"\r",
+							"//transactional values\r",
+							"pm.variables.set(\"userID\", response.user_id);\r",
+							"pm.variables.set(\"user_firstName\", response.user_first_name);\r",
+							"\r",
+							"//Retrieve Total User count before User creation\r",
+							"let totalUsersBeforePost = pm.variables.get(\"Total_Users\")\r",
+							"\r",
+							"//GET Request for all users\r",
+							"const postReq_GETAllUsers ={\r",
+							"    method: 'GET',\r",
+							"    url: 'https://abc.com/endpoint',\r",
+							"    header: 'Content-Type: application/json',\r",
+							"}\r",
+							"\r",
+							"// Send the psot-request GET request.\r",
+							"pm.sendRequest(postReq_GETAllUsers, (err, response) => {\r",
+							"    if (err) {\r",
+							"        console.error('Error:', err);\r",
+							"    } else {\r",
+							"        const GET_response = response.json();\r",
+							"\r",
+							"    //Check increment in total number of users by 1\r",
+							"        pm.test(\"Total Users increased by 1\", function () {\r",
+							"            console.log(\"total number of users before POST call = \" + totalUsersBeforePost);\r",
+							"            console.log(\"total number of users after POST call = \" + GET_response.length);\r",
+							"            pm.expect(GET_response.length).to.eql((totalUsersBeforePost)+1);\r",
+							"        });\r",
+							"    }\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {
+							"usercollection_reusabletests": {
+								"id": "0190529c-d258-7d20-b4bd-1872bb167a87"
+							}
+						}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"user_first_name\":  \"Sample user firstname\",\r\n \"user_last_name\":  \"Sample user lastname\",\r\n \"user_contact_number\": \"8836985591\",\r\n \"user_email_id\": \"sample08email08@gmail.com\",\r\n\r\n    \"userAddress\": {\r\n\r\n     }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/createusers",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"createusers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET User By ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Body structure is correct\", function () {\r",
+							"   \r",
+							"    pm.expect(response).to.be.an('object');\r",
+							"\r",
+							"    pm.expect(response).to.have.property('user_id');\r",
+							"    pm.expect(response).to.have.property('user_first_name');\r",
+							"    pm.expect(response).to.have.property('user_last_name');\r",
+							"    pm.expect(response).to.have.property('user_contact_number');\r",
+							"    pm.expect(response).to.have.property('user_email_id');\r",
+							"    pm.expect(response).to.have.property('creation_time');\r",
+							"    pm.expect(response).to.have.property('last_mod_time');\r",
+							"\r",
+							"\r",
+							"    pm.expect(response).to.have.property('userAddress');\r",
+							"    pm.expect(response.userAddress).to.have.property('addressId');\r",
+							"    pm.expect(response.userAddress).to.have.property('plotNumber');\r",
+							"    pm.expect(response.userAddress).to.have.property('street');\r",
+							"    pm.expect(response.userAddress).to.have.property('state');\r",
+							"    pm.expect(response.userAddress).to.have.property('country');\r",
+							"    pm.expect(response.userAddress).to.have.property('zipCode');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/user/{{userID}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"user",
+						"{{userID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET User By First Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.response.to.have.status(\"OK\");\r",
+							"\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Body structure is correct\", function () {\r",
+							"   \r",
+							"    pm.expect(response).to.be.an('array');\r",
+							"\r",
+							"    pm.expect(response[0]).to.have.property('user_id');\r",
+							"    pm.expect(response[0]).to.have.property('user_first_name');\r",
+							"    pm.expect(response[0]).to.have.property('user_last_name');\r",
+							"    pm.expect(response[0]).to.have.property('user_contact_number');\r",
+							"    pm.expect(response[0]).to.have.property('user_email_id');\r",
+							"    pm.expect(response[0]).to.have.property('creation_time');\r",
+							"    pm.expect(response[0]).to.have.property('last_mod_time');\r",
+							"\r",
+							"\r",
+							"    pm.expect(response[0]).to.have.property('userAddress');\r",
+							"    pm.expect(response[0].userAddress).to.have.property('addressId');\r",
+							"    pm.expect(response[0].userAddress).to.have.property('plotNumber');\r",
+							"    pm.expect(response[0].userAddress).to.have.property('street');\r",
+							"    pm.expect(response[0].userAddress).to.have.property('state');\r",
+							"    pm.expect(response[0].userAddress).to.have.property('country');\r",
+							"    pm.expect(response[0].userAddress).to.have.property('zipCode');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/users/username/{{user_firstName}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"users",
+						"username",
+						"{{user_firstName}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update A User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const usercollectionReusabletests = pm.require('usercollection_reusabletests');\r",
+							"\r",
+							"//1) Validate status\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"//2) Test response time\r",
+							"usercollectionReusabletests.commonTest(\"ANY\", \"response time\");\r",
+							"\r",
+							"//3) Test response header\r",
+							"usercollectionReusabletests.commonTest(\"ANY\", \"header\");\r",
+							"\r",
+							"// 4)a) test response structure -- mandatory fields\r",
+							"usercollectionReusabletests.commonTest(\"PUT\", \"mandatory field data type\");\r",
+							"\r",
+							"// 4)b) test response structure -- optional fields\r",
+							"usercollectionReusabletests.commonTest(\"PUT\", \"optional field data type - populated\");\r",
+							"\r",
+							"//5)a) Test mandatory field values\r",
+							"usercollectionReusabletests.commonTest(\"PUT\", \"mandatory field values\");\r",
+							"\r",
+							"//5)b) Test optional field values\r",
+							"usercollectionReusabletests.commonTest(\"PUT\", \"optional field values\");\r",
+							"\r",
+							"//set updated first name to data variable\r",
+							"const response = pm.response.json();\r",
+							"let updatedFirstName = response.user_first_name;\r",
+							"pm.variables.set(\"user_firstName\", updatedFirstName);\r",
+							"\r",
+							"//Do a Get By First User ID and check for updated name in the response \r",
+							"const postReq_GETUserByUserId = {\r",
+							"    method: 'GET',\r",
+							"    url: 'https://abc.com/endpoint/'+pm.variables.get(\"userID\"),\r",
+							"    header: 'Content-Type: application/json',\r",
+							"}\r",
+							"\r",
+							"// Send the psot-request GET request.\r",
+							"pm.sendRequest(postReq_GETUserByUserId, (err, response) => {\r",
+							"    if (err) {\r",
+							"        console.error('Error:', err);\r",
+							"    } else {\r",
+							"        const GET_response = response.json();\r",
+							"\r",
+							"    //6) Check response contains updated username\r",
+							"        pm.test(\"Updated username in Get By ID Call\", function () {\r",
+							"            pm.expect(GET_response.user_first_name).to.eql(updatedFirstName);\r",
+							"        });\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {
+							"usercollection_reusabletests": {
+								"id": "0190529c-d258-7d20-b4bd-1872bb167a87"
+							}
+						}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"user_first_name\":  \"Updated user firstname\",\r\n \"user_last_name\":  \"Updated user lastname\",\r\n \"user_contact_number\": \"8836985591\",\r\n \"user_email_id\": \"sample08email08@gmail.com\",\r\n\r\n\"userAddress\": {\r\n    \"plotNumber\": \"13-U\",\r\n    \"street\": \"updatedstreet\",\r\n    \"state\": \"CA\",\r\n    \"country\": \"USA\",\r\n    \"zipCode\": \"90004\"\r\n     }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/updateuser/{{userID}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"updateuser",
+						"{{userID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User By First Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/deleteuser/username/{{user_firstName}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"deleteuser",
+						"username",
+						"{{user_firstName}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User By ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/deleteuser/{{userID}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"deleteuser",
+						"{{userID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "{{password_userapi}}",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "{{username_userapi}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"function getNextRequest() {\r",
+					"\r",
+					"    let routes;\r",
+					"\r",
+					"    if (Array.isArray(pm.globals.get(\"remainingRoutes\")) === true) {\r",
+					"\t\t routes = pm.globals.get(\"remainingRoutes\");\r",
+					"    } else {\r",
+					"\t\troutes = pm.iterationData.get(\"routes\"); \r",
+					"\t}\r",
+					"\t\r",
+					"\tconst nextRequest = routes.shift();\r",
+					"\tpm.globals.set(\"remainingRoutes\", routes);\r",
+					"\t\r",
+					"\tif (nextRequest === undefined) {\r",
+					"        pm.globals.clear(\"remainingRoutes\");\r",
+					"        return null;\r",
+					"\t}\r",
+					"\t\r",
+					"    return nextRequest;\r",
+					"\r",
+					"\t}\r",
+					"\r",
+					"pm.execution.setNextRequest(getNextRequest());"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "userID",
+			"value": ""
+		},
+		{
+			"key": "commonTests",
+			"value": ""
+		}
+	]
+}

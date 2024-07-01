@@ -1,0 +1,21 @@
+[
+	{
+		"routes":[			
+			"Mandatory and Optional Fields",
+			"GET User By ID",
+			"GET User By First Name",
+			"Update A User",
+			"Delete User By First Name"
+		]
+	},
+	
+	{
+		"routes":[			
+			"Only Mandatory Fields",
+			"GET User By First Name",
+			"GET User By ID",
+			"Update A User",
+			"Delete User By ID"
+		]
+	}
+]
